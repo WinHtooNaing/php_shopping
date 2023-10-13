@@ -30,7 +30,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </li>
     </ul>
 
-    <!-- SEARCH FORM -->
+    <!-- SEARCH FORM --><!-- SidebarSearch Form -->
+      <!-- Search form -->
+    <form class="form-inline ml-3" method="post">
+      <div class="input-group input-group-sm">
+        <input name="search" type="search" class="form-control form-control-navbar" placeholder="Search" aria-label="Search">
+        <div class="input-group-append">
+          <button class="btn btn-navbar" type="submit">
+              <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+    </form>
  
 
     
