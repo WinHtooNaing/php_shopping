@@ -3,7 +3,7 @@
 
  session_start();
  require 'config/config.php';
- //require '../config/common.php';
+ require 'config/common.php';
  if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
   
   header("Location: login.php");
@@ -25,15 +25,33 @@
       }
       if(empty($_POST['quantity'])){
         $qtyError = "Quantity can be required";
+      }elseif((is_int($_POST['quantity'])) != 1){
+        $qtyError = "Quantity should be integer value";
+  
       }
       if(empty($_POST['price'])){
         $priceError = "Price can be required";
+      }elseif((is_int($_POST['price'])) != 1){
+        $priceError = "Price should be integer value";
+  
       }
       if(empty($_FILES['image'])){
         $imageError = "Image can be required";
       }
 
-    }else{
+    }
+    elseif((is_numeric($_POST['quantity'])) != 1 || (is_numeric($_POST['price'])) != 1){
+      if((is_numeric($_POST['quantity'])) != 1){
+        $qtyError = "Quantity should be integer value";
+  
+      }
+      if((is_numeric($_POST['price'])) != 1){
+        $priceError = "Price should be integer value";
+  
+      }
+     
+    }
+   else{
       $file = 'images/'.($_FILES['image']['name']);
     $imageType = pathinfo($file,PATHINFO_EXTENSION);
     if($imageType != 'png' && $imageType != 'jpg' && $imageType != 'jpeg'){
@@ -70,7 +88,7 @@
             <div class="card">
               <div class="card-body">
                 <form class="" action="product_add.php" method="post" enctype="multipart/form-data">
-                  <!-- <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>"> -->
+                  <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
                   <div class="form-group">
                     <label for="">Name</label>
                     <p style="color: red;"><?php echo empty($nameError) ? '' : $nameError ?></p>
@@ -82,12 +100,18 @@
                     <textarea class="form-control" name="description" rows="8" cols="80"></textarea>
                   </div>
                   <div class="form-group">
-                    
+                  <?php 
+                     $catStmt = $pdo->prepare("SELECT * FROM categories ");
+                     $catStmt->execute();
+                     $catResult = $catStmt ->fetchAll();
+                    ?>
                     <label for="">Category</label>
                     <p style="color: red;"><?php echo empty($catError) ? '' : $catError ?></p>
                     <select class="form-control" class="" name="category">
-                      <option value="1">1</option>
-                      <option value="2">2</option>
+                      <option value="">product category</option>
+                      <?php foreach($catResult as $value){?>
+                        <option value="<?php echo $value['id']?>"><?php echo $value['name']?></option>
+                        <?php }?>
                       
                     </select>
                   </div>

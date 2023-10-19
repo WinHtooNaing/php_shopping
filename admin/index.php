@@ -1,6 +1,7 @@
 <?php 
    session_start();
    require 'config/config.php';
+   require 'config/common.php';
    
    if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
     
@@ -101,11 +102,17 @@
                       $i =1;
                       foreach($result as $value){
                     ?>
+                    <?php 
+                     $catStmt = $pdo->prepare("SELECT * FROM categories WHERE id=".$value['category_id']);
+                     $catStmt->execute();
+                     $catResult = $catStmt ->fetchAll();
+                     
+                    ?>
                     <tr>
                       <td><?php echo $i; ?></td>
-                      <td><?php echo $value['name']; ?></td>
-                      <td><?php echo substr($value['description'],0,50); ?></td>
-                      <td><?php echo $value['category_id']; ?></td>
+                      <td><?php echo escape( $value['name'] );?></td>
+                      <td><?php echo substr($value['description'],0,30); ?></td>
+                      <td><?php echo $catResult[0]['name']; ?></td>
                       <td><?php echo $value['quantity']; ?></td>
                       <td><?php echo $value['price']; ?></td>
                       <td>

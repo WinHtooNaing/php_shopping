@@ -1,6 +1,9 @@
 <?php
+
+session_start();
  require 'config/config.php';
- session_start();
+ require 'config/common.php';
+
  if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])){
   
   header("Location: login.php");
@@ -25,7 +28,17 @@
       
         
   
-      }else{
+    }elseif((is_numeric($_POST['quantity'])) != 1 || (is_numeric($_POST['price'])) != 1){
+      if((is_numeric($_POST['quantity'])) != 1){
+        $qtyError = "Quantity should be integer value";
+  
+      }
+      if((is_numeric($_POST['price'])) != 1){
+        $priceError = "Price should be integer value";
+  
+      }
+     
+    }else{
         $id = $_POST['id'];
         $name = $_POST['name'];
         $desc = $_POST['description'];
@@ -83,7 +96,8 @@
             <div class="card">
               <div class="card-body">
                 <form class="" action="" method="post" enctype="multipart/form-data">
-                  <input name="_token" type="hidden" value="">
+                  <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
+                  
                   <input name="id" type="hidden" value="<?php echo $result[0]['id'] ?>">
                   <div class="form-group">
                     <label for="">Name</label>
@@ -96,11 +110,22 @@
                     <textarea class="form-control" name="description" rows="8" cols="30"><?php echo $result[0]['description'] ?></textarea>
                   </div>
                   <div class="form-group">
-
+                  <?php 
+                     $catStmt = $pdo->prepare("SELECT * FROM categories ");
+                     $catStmt->execute();
+                     $catResult = $catStmt ->fetchAll();
+                    ?>
                     <label for="">Category</label>
                     
                     <select class="form-control" class="" name="category">
-                      <option value="1"><?php echo $result[0]['category_id'] ?></option>
+                    <option value="">product category</option>
+                      <?php foreach($catResult as $value){?>
+                        <?php if($value['id'] == $result[0]['category_id']) : ?>
+                          <option value="<?php echo $value['id']?>" selected><?php echo $value['name']?></option>
+                          <?php else : ?>
+                            <option value="<?php echo $value['id']?>"><?php echo $value['name']?></option>
+                            <?php endif?>
+                      <?php }?>
                       
                     </select>
                   </div>
